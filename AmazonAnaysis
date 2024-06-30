@@ -1,1 +1,56 @@
+import pandas as pd
+import matplotlib.pyplot as plt
 
+# Load your dataset
+# Assuming your dataset is in a CSV file named 'sales_data.csv'
+df = pd.read_csv('sales_data.csv')
+
+# Convert Order Date to datetime format for time series analysis
+df['Order Date'] = pd.to_datetime(df['Order Date'])
+
+# Extract year and month from Order Date for grouping
+df['Year'] = df['Order Date'].dt.year
+df['Month'] = df['Order Date'].dt.month
+df['YearMonth'] = df['Order Date'].dt.to_period('M')
+
+# Calculate total revenue, total cost, and total profit
+df['Total Revenue'] = df['Total Revenue'].astype(float)
+df['Total Cost'] = df['Total Cost'].astype(float)
+df['Total Profit'] = df['Total Profit'].astype(float)
+
+# Monthly sales trend
+monthly_sales = df.groupby('YearMonth')['Total Revenue'].sum()
+
+# Yearly sales trend
+yearly_sales = df.groupby('Year')['Total Revenue'].sum()
+
+# Yearly month-wise sales trend
+yearly_month_sales = df.groupby(['Year', 'Month'])['Total Revenue'].sum()
+
+# Visualizations (optional)
+# Example of plotting monthly sales trend
+plt.figure(figsize=(10, 6))
+monthly_sales.plot(kind='line', marker='o', color='b')
+plt.title('Monthly Sales Trend')
+plt.xlabel('Month')
+plt.ylabel('Total Revenue')
+plt.grid(True)
+plt.show()
+
+# Example of plotting yearly sales trend
+plt.figure(figsize=(10, 6))
+yearly_sales.plot(kind='bar', color='g')
+plt.title('Yearly Sales Trend')
+plt.xlabel('Year')
+plt.ylabel('Total Revenue')
+plt.grid(True)
+plt.show()
+
+# Example of plotting yearly month-wise sales trend (if needed)
+yearly_month_sales.unstack().plot(kind='line', marker='o', figsize=(12, 8))
+plt.title('Yearly Month-wise Sales Trend')
+plt.xlabel('Month')
+plt.ylabel('Total Revenue')
+plt.grid(True)
+plt.legend(title='Year')
+plt.show()
